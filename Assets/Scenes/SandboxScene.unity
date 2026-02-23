@@ -7116,7 +7116,7 @@ MonoBehaviour:
   laserMaxDistance: 100
   laserFadeDuration: 0.5
   manualReloadDuration: 1.5
-  badAimMaxOffset: 0.1
+  badAimMaxOffset: 7.5
 --- !u!1 &6658908978225911925
 GameObject:
   m_ObjectHideFlags: 0
@@ -7845,7 +7845,7 @@ MonoBehaviour:
   laserMaxDistance: 100
   laserFadeDuration: 0.5
   manualReloadDuration: 1.5
-  badAimMaxOffset: 0.1
+  badAimMaxOffset: 7.5
 --- !u!33 &8152767237743238721
 MeshFilter:
   m_ObjectHideFlags: 0

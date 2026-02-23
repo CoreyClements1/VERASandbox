@@ -164,7 +164,11 @@ public class ExperimentManager : MonoBehaviour
         // Use the auto-generated VERAIV class for your experiment to set and get conditions in a centralized way.
         // For example, VERAIV_FiringMode.SetValue.
         //----------------------------------------------------//
-        BlasterController.Instance.UseBadAimMode = useBadAim;
+        BlasterController[] blasters = FindObjectsByType<BlasterController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var blaster in blasters)
+        {
+            blaster.UseBadAimMode = useBadAim;
+        }
     }
 
     #endregion

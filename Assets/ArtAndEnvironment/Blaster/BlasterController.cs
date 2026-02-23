@@ -12,8 +12,6 @@ public class BlasterController : MonoBehaviour
     #region VARIABLES
 
 
-    public static BlasterController Instance { get; private set; } // Singleton instance for easy access from other scripts
-
     [Header("Input")]
     [SerializeField] private InputActionReference triggerAction;
 
@@ -29,7 +27,7 @@ public class BlasterController : MonoBehaviour
     [SerializeField] private float laserMaxDistance = 100f;
     [SerializeField] private float laserFadeDuration = 0.5f;
     [SerializeField] private float manualReloadDuration = 1.5f; // Fallback if animation duration can't be found
-    [SerializeField] private float badAimMaxOffset = 0.1f; // Maximum random offset angle for bad aim mode
+    [SerializeField] private float badAimMaxOffset = 7.5f; // Maximum random offset angle for bad aim mode
 
     private bool isReloading = false;
     private float reloadStartTime;
@@ -49,19 +47,6 @@ public class BlasterController : MonoBehaviour
 
 
     #region SETUP AND EVENT SUBSCRIPTIONS
-
-
-    // Awake, setup singleton
-    void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Debug.LogWarning("Multiple instances of BlasterController detected! There should only be one BlasterController in the scene.");
-            Destroy(this);
-        }
-
-        Instance = this;
-    }
 
 
     // OnEnable, subscribe to the trigger action
@@ -198,10 +183,34 @@ public class BlasterController : MonoBehaviour
         // Apply random offset if bad aim mode is enabled
         if (useBadAimMode)
         {
-            // Add random offset to the direction
-            float randomX = Random.Range(-badAimMaxOffset, badAimMaxOffset);
-            float randomY = Random.Range(-badAimMaxOffset, badAimMaxOffset);
-            direction = (direction + new Vector3(randomX, randomY, 0f)).normalized;
+            // Randomly choose one of four directions: up, down, left, right
+            int randomDirection = Random.Range(0, 4);
+            Vector3 rotationAxis;
+            float rotationAngle;
+
+            switch (randomDirection)
+            {
+                case 0: // Up
+                    rotationAxis = laserOrigin.right;
+                    rotationAngle = -badAimMaxOffset;
+                    break;
+                case 1: // Down
+                    rotationAxis = laserOrigin.right;
+                    rotationAngle = badAimMaxOffset;
+                    break;
+                case 2: // Left
+                    rotationAxis = laserOrigin.up;
+                    rotationAngle = badAimMaxOffset;
+                    break;
+                case 3: // Right
+                default:
+                    rotationAxis = laserOrigin.up;
+                    rotationAngle = -badAimMaxOffset;
+                    break;
+            }
+
+            // Apply rotation to direction
+            direction = Quaternion.AngleAxis(rotationAngle, rotationAxis) * direction;
         }
 
         Vector3 endPoint;
