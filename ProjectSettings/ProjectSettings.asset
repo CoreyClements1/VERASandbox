@@ -828,7 +828,8 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    WebGL: VERAFile_Experiment_Telemetry
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
