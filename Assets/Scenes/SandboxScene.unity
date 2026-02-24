@@ -362,9 +362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcdcfffad9cd3e24691dbe5e2e40b63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExperimentManager
-  pumpkinRoundDuration: 5
-  roundsPerEnvironment: 1
-  numRepetitionsOfEachEnvironment: 2
+  pumpkinRoundDuration: 20
+  roundsPerEnvironment: 3
+  numRepetitionsOfEachEnvironment: 1
 --- !u!4 &115233136
 Transform:
   m_ObjectHideFlags: 0
@@ -7112,6 +7112,7 @@ MonoBehaviour:
   readyToFireMaterial: {fileID: 2100000, guid: a4ab9f0e24287e24abde22fb046baeb0, type: 2}
   blasterLaserPrefab: {fileID: 3365921804153250975, guid: b7fb048b27402b74da9283b2ff924160, type: 3}
   laserOrigin: {fileID: 1319018364}
+  blasterHandedness: 0
   reloadAnimationName: Reload
   laserMaxDistance: 100
   laserFadeDuration: 0.5
@@ -7841,6 +7842,7 @@ MonoBehaviour:
   readyToFireMaterial: {fileID: 2100000, guid: ffa91cf0c6f40ee4a9f8c67f5b1e79d1, type: 2}
   blasterLaserPrefab: {fileID: 3365921804153250975, guid: b7fb048b27402b74da9283b2ff924160, type: 3}
   laserOrigin: {fileID: 181743038}
+  blasterHandedness: 0
   reloadAnimationName: Reload
   laserMaxDistance: 100
   laserFadeDuration: 0.5
