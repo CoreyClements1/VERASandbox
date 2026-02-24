@@ -14,12 +14,20 @@ public class ExperimentManager : MonoBehaviour
     #region VARIABLES
 
 
+    public static ExperimentManager Instance { get; private set; } // Singleton instance for easy access across scripts
+
     [Tooltip("How long each round of pumpkin shooting will last in seconds.")]
     [SerializeField] private float pumpkinRoundDuration = 20f;
     [Tooltip("How many pumpkin shooting rounds will occur in each environment before switching to the next one.")]
     [SerializeField] private int roundsPerEnvironment = 3;
     [Tooltip("How many times a single participant will experience each environment before the experiment ends.")]
     [SerializeField] private int numRepetitionsOfEachEnvironment = 1;
+
+    private int currentEnvironmentBlock = 0; // Tracks the current block of the experiment (a block consists of roundsPerEnvironment rounds in a single environment)
+    private int currentRound = 0; // Tracks the current round number within the current environment block
+    private int shotsFiredInRound = 0; // Tracks the number of shots fired by the participant in the current round
+    private int shotsHitInRound = 0; // Tracks the number of shots that hit a target in the current round
+    private bool inShootingRound = false; // Tracks whether the participant is currently in an active shooting round
 
 
     #endregion
@@ -28,6 +36,20 @@ public class ExperimentManager : MonoBehaviour
     #region SETUP
 
 
+    // On awake, set up singleton instance
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); // Ensure only one instance of ExperimentManager exists
+            return;
+        }
+
+        Instance = this;
+    }
+
+
+    // On start, initialize the experiment
     void Start()
     {
         InitializeExperiment();
@@ -89,18 +111,18 @@ public class ExperimentManager : MonoBehaviour
         int totalEnvironmentBlocks = 2 * numRepetitionsOfEachEnvironment;
 
         // Loop through each environment block
-        for (int blockIndex = 0; blockIndex < totalEnvironmentBlocks; blockIndex++)
+        for (currentEnvironmentBlock = 0; currentEnvironmentBlock < totalEnvironmentBlocks; currentEnvironmentBlock++)
         {
             // Do roundsPerEnvironment rounds in current environment
-            for (int round = 0; round < roundsPerEnvironment; round++)
+            for (currentRound = 0; currentRound < roundsPerEnvironment; currentRound++)
             {
                 yield return new WaitForSeconds(2f);
 
                 // Show instructions before each round
                 bool roundStarted = false;
                 InstructionsHandler.Instance.ShowInstructions(
-                    $"Environment {blockIndex + 1} of {totalEnvironmentBlocks}\n" +
-                    $"Round {round + 1} of {roundsPerEnvironment}\n\n" +
+                    $"Environment {currentEnvironmentBlock + 1} of {totalEnvironmentBlocks}\n" +
+                    $"Round {currentRound + 1} of {roundsPerEnvironment}\n\n" +
                     "Shoot the pumpkin to begin!",
                     onInstructionsComplete: () => { roundStarted = true; }
                 );
@@ -110,10 +132,17 @@ public class ExperimentManager : MonoBehaviour
 
                 // Start the pumpkin shooting round
                 bool roundEnded = false;
+                shotsFiredInRound = 0;
+                shotsHitInRound = 0;
                 PumpkinSpawner.Instance.StartPumpkinRound(pumpkinRoundDuration, () => { roundEnded = true; });
+                inShootingRound = true;
 
                 // Wait for the round to end
                 yield return new WaitUntil(() => roundEnded);
+                inShootingRound = false;
+
+                // Log summary data about the completed round
+                LogRoundData();
             }
 
             // The block is completed - roundsPerEnvironment rounds have been completed in the current environment.
@@ -127,7 +156,7 @@ public class ExperimentManager : MonoBehaviour
             yield return new WaitUntil(() => surveyCompleted);
 
             // If there are more blocks to go, switch environments before starting the next block
-            if (blockIndex < totalEnvironmentBlocks - 1)
+            if (currentEnvironmentBlock < totalEnvironmentBlocks - 1)
             {
                 yield return new WaitForSeconds(2f);
 
@@ -213,6 +242,52 @@ public class ExperimentManager : MonoBehaviour
         //----------------------------------------------------//
         Debug.Log("Survey should be shown here - skipping for now."); // For now, simply log that we would show a survey here.
         onSurveyComplete?.Invoke(); // Invoke the callback immediately for now since we don't have an actual survey implemented.
+    }
+
+
+    #endregion
+
+
+    #region DATA LOGGING
+
+
+    // Logs data about a laser shot fired by the participant
+    // Automatically called by BlasterController script when a shot is fired
+    public void LogLaserShot(BlasterController.BlasterHandedness handedness, Vector3 origin, Vector3 direction, bool hitTarget)
+    {
+        // Do not log if we are not actively in a shooting round
+        if (!inShootingRound)
+            return;
+
+        //----------------------------------------------------//
+        // VERA SANDBOX NOTE:
+        // For data logging, you can use VERA's built-in data logging system to log any relevant data points you want to track.
+        // This will automatically associate the logged data with the participant's ID and current conditions, and save it in a CSV file for later analysis.
+        // For every file type you have defined on the VERA web interface, VERA will auto-generate a single static class for logging data.
+        // For example, if you have defined a file type called "LaserShots", VERA will generate a class called VERAFile_LaserShots with static methods for logging data to that file.
+        //     EXAMPLE: If we have a file type called "LaserShots" with columns for block, round, handedness, origin, direction, and hitTarget, we could log an entry like this:
+        //              VERAFile_LaserShots.CreateCsvEntry(0, currentEnvironmentBlock + 1, currentRound + 1, handedness.ToString(), origin, direction, hitTarget);
+        //----------------------------------------------------//
+        Debug.Log($"Laser shot logged: Block={currentEnvironmentBlock + 1}, Round={currentRound + 1}, Handedness={handedness}, Origin={origin}, Direction={direction}, HitTarget={hitTarget}");
+
+        // Keep track of how many shots have been fired and hit in the current round
+        shotsFiredInRound++;
+        if (hitTarget)
+            shotsHitInRound++;
+    }
+
+
+    // Logs summary data about a completed round of pumpkin shooting
+    public void LogRoundData()
+    {
+        float accuracy = shotsFiredInRound > 0 ? (float)shotsHitInRound / shotsFiredInRound : 0f;
+        //----------------------------------------------------//
+        // VERA SANDBOX NOTE:
+        // Similar to logging individual laser shots, here we can log summary data about each round using VERA's data logging system.
+        //     EXAMPLE: If we have a file type called "RoundData" with columns for block, round, totalShots, pumpkinsHit, and accuracy, we could log an entry like this:
+        //              VERAFile_RoundData.CreateCsvEntry(0, currentEnvironmentBlock + 1, currentRound + 1, shotsFiredInRound, shotsHitInRound, accuracy);
+        //----------------------------------------------------//
+        Debug.Log($"Round data logged: Block={currentEnvironmentBlock + 1}, Round={currentRound + 1}, TotalShots={shotsFiredInRound}, PumpkinsHit={shotsHitInRound}, Accuracy={accuracy:P2}");
     }
 
 

@@ -12,6 +12,12 @@ public class BlasterController : MonoBehaviour
     #region VARIABLES
 
 
+    public enum BlasterHandedness
+    {
+        Left,
+        Right
+    }
+
     [Header("Input")]
     [SerializeField] private InputActionReference triggerAction;
 
@@ -23,6 +29,7 @@ public class BlasterController : MonoBehaviour
     [SerializeField] private Transform laserOrigin;
 
     [Header("Settings")]
+    [SerializeField] private BlasterHandedness blasterHandedness;
     [SerializeField] private string reloadAnimationName = "Reload";
     [SerializeField] private float laserMaxDistance = 100f;
     [SerializeField] private float laserFadeDuration = 0.5f;
@@ -216,6 +223,7 @@ public class BlasterController : MonoBehaviour
         Vector3 endPoint;
 
         RaycastHit hit;
+        bool hitPumpkin = false;
         if (Physics.Raycast(startPoint, direction, out hit, laserMaxDistance))
         {
             // Hit something
@@ -226,6 +234,7 @@ public class BlasterController : MonoBehaviour
             if (explodable != null)
             {
                 explodable.Explode();
+                hitPumpkin = true;
             }
         }
         else
@@ -253,6 +262,9 @@ public class BlasterController : MonoBehaviour
             Debug.LogWarning("BlasterLaser prefab does not have a LineRenderer component!");
             Destroy(laserObject);
         }
+
+        // Log the shot data
+        ExperimentManager.Instance.LogLaserShot(blasterHandedness, startPoint, direction, hitPumpkin);
     }
 
 
