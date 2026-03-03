@@ -204,7 +204,7 @@ All other experiment settings may remain **default or blank**.
 Install the VERA SDK through the **Unity Package Manager** using the Git URL:
 
 ```
-https://github.com/ucf-research/vera.git
+https://github.com/ucf-research/vera-package.git
 ```
 
 ---
