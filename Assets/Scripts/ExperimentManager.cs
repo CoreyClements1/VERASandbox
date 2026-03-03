@@ -52,6 +52,14 @@ public class ExperimentManager : MonoBehaviour
     // On start, initialize the experiment
     void Start()
     {
+        //----------------------------------------------------//
+        // VERA SANDBOX NOTE:
+        // Here, we might want to wait for VERA to fully initialize before starting the experiment setup.
+        // You can use the VERASessionManager to check if the session is ready before proceeding - 
+        //     EXAMPLE: VERASessionManager.initialized indicates whether VERA has finished initializing.
+        //     EXAMPLE: VERASessionManager.onInitialized is a UnityEvent which is triggered once VERA finishes initializing.
+        //              Subscribe to this event via code like this: VERASessionManager.onInitialized.AddListener(InitializeExperiment);
+        //----------------------------------------------------//
         InitializeExperiment();
     }
 
