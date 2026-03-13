@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
+
+// VERA SANDBOX NOTE: If you are using VERA, make sure to include the VERA namespace to access VERA's features.
 using VERA;
 
 public class ExperimentManager : MonoBehaviour
@@ -84,6 +86,7 @@ public class ExperimentManager : MonoBehaviour
         //InitializeExperiment();
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
     }
 
@@ -107,6 +110,7 @@ public class ExperimentManager : MonoBehaviour
         //bool useBadAim = UnityEngine.Random.value > 0.5f;
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
         SetUseBadAim(useBadAim);
@@ -252,6 +256,7 @@ public class ExperimentManager : MonoBehaviour
         // WITHOUT VERA, we don't use a condition management system; no code is necessary.
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
         EnvironmentManager.Instance.SetEnvironment(environmentName); // Sets the visuals of the environment
@@ -274,6 +279,7 @@ public class ExperimentManager : MonoBehaviour
         // WITHOUT VERA, we don't use a condition management system; no code is necessary.
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
         // Set the aim mode on the blaster controllers based on the assigned condition
@@ -310,6 +316,7 @@ public class ExperimentManager : MonoBehaviour
         //onSurveyComplete?.Invoke();
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
     }
@@ -350,6 +357,7 @@ public class ExperimentManager : MonoBehaviour
         //Debug.Log($"Laser shot logged: block={currentEnvironmentBlock}, round={currentRound}, hitTarget={hitTarget}");
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
     }
@@ -370,6 +378,7 @@ public class ExperimentManager : MonoBehaviour
         //Debug.Log($"Round data logged: block={currentEnvironmentBlock}, round={currentRound}, totalShots={shotsFiredInRound}, totalHits={shotsHitInRound}, accuracy={accuracy}");
 
         // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
     }
 
@@ -394,6 +403,9 @@ public class ExperimentManager : MonoBehaviour
 
         // WITHOUT VERA, we don't have session management; for now, simply log that the experiment is complete.
         //Debug.Log("Experiment complete!");
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
 
     }
