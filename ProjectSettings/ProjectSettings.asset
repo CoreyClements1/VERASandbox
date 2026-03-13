@@ -566,6 +566,9 @@ PlayerSettings:
   - serializedVersion: 3
     m_BuildTarget: Android
     m_Formats: 03000000
+  - serializedVersion: 3
+    m_BuildTarget: WebGL
+    m_Formats: 05000000
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0
   actionOnDotNetUnhandledException: 1
@@ -832,15 +835,15 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    Nintendo Switch: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    PS4: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    Standalone: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    WebGL: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode;VERAFile_Experiment_Telemetry
-    Windows Store Apps: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    XboxOne: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    iPhone: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
-    tvOS: VERAFile_LaserShots;VERAFile_RoundData;VERAFile_Survey_Responses;VERAIV_Environment;VERAIV_FiringMode
+    Android: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    Nintendo Switch: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    PS4: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    Standalone: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    WebGL: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType;VERAFile_Experiment_Telemetry
+    Windows Store Apps: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    XboxOne: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    iPhone: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
+    tvOS: VERAFile_Survey_Responses;VERAFile_LaserLogs;VERAFile_RoundSummaries;URP_COMPATIBILITY_MODE;VERAIV_Environment;VERAIV_AimType
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

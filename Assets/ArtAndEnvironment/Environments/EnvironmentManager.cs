@@ -16,13 +16,7 @@ public class EnvironmentManager : MonoBehaviour
     [SerializeField] private Transform[] iceSpawnpoints;
     private Transform lastUsedSpawnPoint;
 
-    public enum EnvironmentType
-    {
-        Desert,
-        Ice
-    }
-
-    private EnvironmentType currentEnvironment;
+    private string currentEnvironment;
 
     #endregion
 
@@ -44,27 +38,27 @@ public class EnvironmentManager : MonoBehaviour
 
     #region ENVIRONMENT SWAPPING
 
-    public EnvironmentType GetCurrentEnvironment()
+    public string GetCurrentEnvironment()
     {
         return currentEnvironment;
     }
 
     // Sets the current environment and updates visuals and spawn points accordingly
-    public void SetEnvironment(EnvironmentType environmentType)
+    public void SetEnvironment(string environmentName)
     {
-        switch (environmentType)
+        switch (environmentName.ToLower())
         {
-            case EnvironmentType.Desert:
+            case "desert":
                 desertEnvironment.SetActive(true);
                 iceEnvironment.SetActive(false);
                 break;
-            case EnvironmentType.Ice:
+            case "snow":
                 desertEnvironment.SetActive(false);
                 iceEnvironment.SetActive(true);
                 break;
         }
 
-        currentEnvironment = environmentType;
+        currentEnvironment = environmentName;
     }
 
     #endregion
@@ -76,12 +70,12 @@ public class EnvironmentManager : MonoBehaviour
     {
         Transform[] spawnpoints = null;
 
-        switch (currentEnvironment)
+        switch (currentEnvironment.ToLower())
         {
-            case EnvironmentType.Desert:
+            case "desert":
                 spawnpoints = desertSpawnpoints;
                 break;
-            case EnvironmentType.Ice:
+            case "snow":
                 spawnpoints = iceSpawnpoints;
                 break;
         }

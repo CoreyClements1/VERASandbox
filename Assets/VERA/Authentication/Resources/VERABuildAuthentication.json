@@ -1,0 +1,13 @@
+{
+    "authenticated": true,
+    "buildAuthToken": "7f65507237d38918c25bad2080041c7bb671acd81eb2869d93c8c8f427fe6ab6",
+    "activeExperiment": "69b193fd305f8f4e6f40fa75",
+    "activeExperimentName": "VERA Sandbox",
+    "isMultiSite": false,
+    "activeSite": "69b193fd305f8f4e6f40fa76",
+    "activeSiteName": "Default Site",
+    "currentBuildNumber": 3,
+    "dataRecordingType": 2,
+    "debugPreference": 1,
+    "rotationFormat": 0
+}

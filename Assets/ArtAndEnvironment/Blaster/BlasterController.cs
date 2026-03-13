@@ -41,6 +41,7 @@ public class BlasterController : MonoBehaviour
     private float reloadDuration;
 
     private bool useBadAimMode = false; // Whether to use poor aim mode (random inaccuracy)
+    private bool canFire = true; // Whether the blaster can currently fire (used to disable firing during surveys)
 
     // Public property to enable/disable bad aim mode
     public bool UseBadAimMode
@@ -152,10 +153,16 @@ public class BlasterController : MonoBehaviour
     private void OnTriggerPulled(InputAction.CallbackContext context)
     {
         // Only fire if not currently reloading
-        if (!isReloading)
+        if (!isReloading && canFire)
         {
             Fire();
         }
+    }
+
+    // Public method to enable or disable firing (used by ExperimentManager during surveys)
+    public void SetCanFire(bool value)
+    {
+        canFire = value;
     }
 
     // Handle the firing logic: play muzzle flash and start reload sequence

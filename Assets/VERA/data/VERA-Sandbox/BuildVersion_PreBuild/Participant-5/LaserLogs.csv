@@ -1,0 +1,8 @@
+pID,conditions,ts,block,round,hitTarget
+5,"Environment: 2, FiringMode: 1",9.741546,1,1,true
+5,"Environment: 2, FiringMode: 1",11.92172,1,1,true
+5,"Environment: 2, FiringMode: 1",13.72553,1,1,false
+5,"Environment: 2, FiringMode: 1",15.04591,1,1,true
+5,"Environment: 2, FiringMode: 1",16.69869,1,1,true
+5,"Environment: 2, FiringMode: 1",18.32241,1,1,false
+5,"Environment: 2, FiringMode: 1",19.47564,1,1,false

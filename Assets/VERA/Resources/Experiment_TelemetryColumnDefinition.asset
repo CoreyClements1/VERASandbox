@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e490875681dccfc47bd4db3813ef95b7, type: 3}
+  m_Name: Experiment_TelemetryColumnDefinition
+  m_EditorClassIdentifier: VERA::VERA.VERAColumnDefinition
+  fileType:
+    fileTypeId: Experiment_Telemetry
+    name: Experiment_Telemetry
+    description: Baseline VR tracking and input data
+    skipUpload: 0
+  skipAutoColumns: 0
+  columns:
+  - name: pID
+    description: Participant ID
+    type: 1
+  - name: conditions
+    description: Current experiment conditions
+    type: 3
+  - name: ts
+    description: Time when data was recorded
+    type: 6
+  - name: headsetDetected
+    description: Whether VR headset is connected and tracking
+    type: 5
+  - name: headsetPosX
+    description: VR headset horizontal position (left-right)
+    type: 1
+  - name: headsetPosY
+    description: VR headset vertical position (up-down)
+    type: 1
+  - name: headsetPosZ
+    description: VR headset depth position (forward-back)
+    type: 1
+  - name: headsetRot
+    description: VR headset rotation (yaw, pitch, roll)
+    type: 3
+  - name: leftDetected
+    description: Whether left hand controller is connected and tracking
+    type: 5
+  - name: leftControllerPosX
+    description: Left hand controller horizontal position (left-right)
+    type: 1
+  - name: leftControllerPosY
+    description: Left hand controller vertical position (up-down)
+    type: 1
+  - name: leftControllerPosZ
+    description: Left hand controller depth position (forward-back)
+    type: 1
+  - name: leftControllerRot
+    description: Left hand controller rotation (yaw, pitch, roll)
+    type: 3
+  - name: leftTrigger
+    description: Left controller trigger pressure (0=not pressed, 1=fully pressed)
+    type: 1
+  - name: leftGrip
+    description: Left controller grip pressure (0=not gripped, 1=fully gripped)
+    type: 1
+  - name: leftPrimaryButton
+    description: Left controller main button (1=pressed, 0=not pressed)
+    type: 1
+  - name: leftSecondaryButton
+    description: Left controller secondary button (1=pressed, 0=not pressed)
+    type: 1
+  - name: leftPrimary2DAxisClick
+    description: Left controller thumbstick click (1=clicked, 0=not clicked)
+    type: 1
+  - name: leftThumbstickX
+    description: Left controller thumbstick horizontal axis (-1=left, 0=center, 1=right;
+      -2=NA)
+    type: 1
+  - name: leftThumbstickY
+    description: Left controller thumbstick vertical axis (-1=down, 0=center, 1=up;
+      -2=NA)
+    type: 1
+  - name: rightDetected
+    description: Whether right hand controller is connected and tracking
+    type: 5
+  - name: rightControllerPosX
+    description: Right hand controller horizontal position (left-right)
+    type: 1
+  - name: rightControllerPosY
+    description: Right hand controller vertical position (up-down)
+    type: 1
+  - name: rightControllerPosZ
+    description: Right hand controller depth position (forward-back)
+    type: 1
+  - name: rightControllerRot
+    description: Right hand controller rotation (yaw, pitch, roll)
+    type: 3
+  - name: rightTrigger
+    description: Right controller trigger pressure (0=not pressed, 1=fully pressed)
+    type: 1
+  - name: rightGrip
+    description: Right controller grip pressure (0=not gripped, 1=fully gripped)
+    type: 1
+  - name: rightPrimaryButton
+    description: Right controller main button (1=pressed, 0=not pressed)
+    type: 1
+  - name: rightSecondaryButton
+    description: Right controller secondary button (1=pressed, 0=not pressed)
+    type: 1
+  - name: rightPrimary2DAxisClick
+    description: Right controller thumbstick click (1=clicked, 0=not clicked)
+    type: 1
+  - name: rightThumbstickX
+    description: Right controller thumbstick horizontal axis (-1=left, 0=center,
+      1=right; -2=NA)
+    type: 1
+  - name: rightThumbstickY
+    description: Right controller thumbstick vertical axis (-1=down, 0=center, 1=up;
+      -2=NA)
+    type: 1

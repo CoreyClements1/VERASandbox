@@ -1,0 +1,2 @@
+pID,conditions,ts,block,round,shotsFired,shotsHit,accuracy
+3,"Environment: 2, FiringMode: 1",72.99787,1,1,12,11,0.9166667
