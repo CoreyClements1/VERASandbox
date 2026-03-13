@@ -1,8 +1,0 @@
-pID,conditions,ts,eventId,LaserOrigin,HitOrMiss
-3,"Environment: 1, AimModifier: 1",22.11225,0,"(-1.34, 2.30, 0.72)",true
-3,"Environment: 1, AimModifier: 1",24.66581,0,"(-1.65, 2.26, 0.75)",true
-3,"Environment: 1, AimModifier: 1",27.27673,0,"(-1.66, 2.21, 0.81)",false
-3,"Environment: 1, AimModifier: 1",30.05486,0,"(-1.72, 2.19, 0.85)",true
-3,"Environment: 1, AimModifier: 1",32.65154,0,"(-1.49, 2.19, 0.77)",true
-3,"Environment: 1, AimModifier: 1",35.24929,0,"(-1.61, 2.16, 0.81)",true
-3,"Environment: 1, AimModifier: 1",37.79078,0,"(-1.68, 2.18, 0.84)",true
