@@ -2,14 +2,29 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+// VERA SANDBOX NOTE: If you are using VERA, make sure to include the VERA namespace at the top of your script to access VERA's features.
+//using VERA;
+
 public class ExperimentManager : MonoBehaviour
 {
 
-    // ExperimentManager is responsible for managing the overall experiment flow, 
-    // including participant state and condition management.
+    /*
+     * This ExperimentManager script serves as the central hub for managing the flow of the sandbox experiment.
+     * It handles the initialization, progression, and termination of the experiment.
+     *
+     * Various comments throughout the script provide guidance on how to utilize VERA's features for:
+     *     - Session management (e.g., initializing, finalizing sessions)
+     *     - Condition management (e.g., assigning participants to conditions, syncing conditions across scripts)
+     *     - Data logging (e.g., logging relevant data points for later analysis)
+     *     - Survey integration (e.g., displaying surveys and logging responses)
+     * These comments are tagged with "VERA SANDBOX NOTE" for easy identification.
+     *
+     * NOTE - If you are using VERA, it is assumed you have set up a corresponding experiment on the VERA web portal
+     * with the necessary conditions, files for data logging, and surveys as referenced in the code.
+     *
+     * For more information, refer to the VERA Sandbox documentation at vera-xr.io/documentation/sandbox-demo
+     */
 
-    // Various VERA sandbox-related notes are included throughout as comments
-    // to guide you on how to use VERA's features to implement the experiment.
 
     #region VARIABLES
 
@@ -28,6 +43,7 @@ public class ExperimentManager : MonoBehaviour
     private int shotsFiredInRound = 0; // Tracks the number of shots fired by the participant in the current round
     private int shotsHitInRound = 0; // Tracks the number of shots that hit a target in the current round
     private bool inShootingRound = false; // Tracks whether the participant is currently in an active shooting round
+    private BlasterController[] blasterControllers; // References to the participant's blaster controllers for managing firing modes
 
 
     #endregion
@@ -46,6 +62,9 @@ public class ExperimentManager : MonoBehaviour
         }
 
         Instance = this;
+
+        // Get a reference to the blaster controllers in the scene
+        blasterControllers = FindObjectsByType<BlasterController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
 
@@ -53,32 +72,47 @@ public class ExperimentManager : MonoBehaviour
     void Start()
     {
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Here, we might want to wait for VERA to fully initialize before starting the experiment setup.
-        // You can use the VERASessionManager to check if the session is ready before proceeding - 
-        //     EXAMPLE: VERASessionManager.initialized indicates whether VERA has finished initializing.
-        //     EXAMPLE: VERASessionManager.onInitialized is a UnityEvent which is triggered once VERA finishes initializing.
-        //              Subscribe to this event via code like this: VERASessionManager.onInitialized.AddListener(InitializeExperiment);
-        //----------------------------------------------------//
+        // VERA SANDBOX NOTE 1: INITIALIZATION
+        // Before we initialize our experiment (e.g., setting conditions, displaying instructions), 
+        // we need to ensure that VERA has finished its own initialization process.
+        // You can use the VERASessionManager to check if the session is ready before proceeding:
+        //     * VERASessionManager.initialized - a boolean that indicates whether VERA has finished initializing.
+        //     * VERASessionManager.onInitialized - a UnityEvent that is triggered once VERA finishes initializing.
+
+        // WITH VERA, we'd initialize the experiment only after VERA is ready:
+        //VERASessionManager.onInitialized.AddListener(InitializeExperiment);
+
+        // WITHOUT VERA, we can simply call InitializeExperiment directly:
         InitializeExperiment();
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
+        //----------------------------------------------------//
     }
 
 
     // Initializes the experiment by determining participant conditions and displaying instructions.
     private void InitializeExperiment()
     {
-        SetEnvironment(EnvironmentManager.EnvironmentType.Ice); // Start in the ice environment
+        SetEnvironment("snow"); // Start in the snow environment
 
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Here, we might want to differentiate firing mode based on the participant's ID -
-        // For example, maybe we want half the participants to use perfect good aim mode and half to use bad aim mode.
-        // Using VERA, we can assign participants to these conditions in a balanced way, and use that assignment here to set the firing mode.
-        // You can use the VERASessionManager to get the participant's ID -
-        // For example, you could do a modulo operation on VERASessionManager.participantId to assign conditions in a balanced way.
+        // VERA SANDBOX NOTE 2: PARTICIPANT IDS
+        // You can use VERA to get the current participant's ID:
+        //     * VERASessionManager.participantID - an integer representing the participant's unique ID for the session.
+        // For this demo, we are using the participant ID to assign participants to different firing mode conditions 
+        // (good aim vs. bad aim) in a balanced way - i.e., even ID's get one condition, odd ID's get the other
+
+        // WITH VERA, we can assign conditions based on participant ID:
+        //bool useBadAim = VERASessionManager.participantID % 2 == 0;
+
+        // WITHOUT VERA, we can simply randomize condition assignment:
+        bool useBadAim = UnityEngine.Random.value > 0.5f;
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        int participantId = 0; // Placeholder ID - replace with actual participant ID from VERA session management
-        bool useBadAim = participantId % 2 == 0; // Example condition assignment based on participant ID (50/50 split)
+
         SetUseBadAim(useBadAim);
 
         // Display instructions and tutorial round
@@ -105,16 +139,6 @@ public class ExperimentManager : MonoBehaviour
     // Manages the flow of the experiment, including timing rounds and switching environments.
     private IEnumerator ExperimentFlowCoroutine()
     {
-        /*
-         *  General experiment flow:
-         *  Each round, a participant will shoot pumpkins for pumpkinRoundDuration seconds.
-         *  After each round, there is a short break; once participants are ready, they can proceed to the next round.
-         *  A "block" represents a full set of roundsPerEnvironment rounds in a single environment.
-         *  After each block concludes, participants will complete a short survey about how well they think they performed.
-         *  After the survey, the environment will switch, and the next block will begin in the new environment.
-         *  After all blocks are completed, the experiment will conclude.
-         */
-
         // Calculate total "blocks" of the experiment - a single block consists of roundsPerEnvironment rounds in a single environment.
         int totalEnvironmentBlocks = 2 * numRepetitionsOfEachEnvironment;
 
@@ -154,6 +178,11 @@ public class ExperimentManager : MonoBehaviour
             }
 
             // The block is completed - roundsPerEnvironment rounds have been completed in the current environment.
+            // Disable firing while survey is shown
+            foreach (var blaster in blasterControllers)
+            {
+                blaster.SetCanFire(false);
+            }
 
             // Display a survey between blocks asking participants to rate their proficiency in the current environment
             yield return new WaitForSeconds(2f);
@@ -162,6 +191,12 @@ public class ExperimentManager : MonoBehaviour
 
             // Wait for the survey to be completed
             yield return new WaitUntil(() => surveyCompleted);
+
+            // Re-enable firing after survey completion
+            foreach (var blaster in blasterControllers)
+            {
+                blaster.SetCanFire(true);
+            }
 
             // If there are more blocks to go, switch environments before starting the next block
             if (currentEnvironmentBlock < totalEnvironmentBlocks - 1)
@@ -174,11 +209,9 @@ public class ExperimentManager : MonoBehaviour
                 FadeCanvas.Instance.FadeIn(fadeDuration);
                 yield return new WaitForSeconds(fadeDuration);
 
-                // Switch environments (Ice -> Desert, or Desert -> Ice)
-                EnvironmentManager.EnvironmentType currentEnvironment = EnvironmentManager.Instance.GetCurrentEnvironment();
-                EnvironmentManager.EnvironmentType nextEnvironment = (currentEnvironment == EnvironmentManager.EnvironmentType.Ice)
-                    ? EnvironmentManager.EnvironmentType.Desert
-                    : EnvironmentManager.EnvironmentType.Ice;
+                // Switch environments (Snow -> Desert, or Desert -> Snow)
+                string currentEnvironment = EnvironmentManager.Instance.GetCurrentEnvironment();
+                string nextEnvironment = (currentEnvironment == "snow") ? "desert" : "snow";
                 SetEnvironment(nextEnvironment);
                 yield return new WaitForSeconds(1f);
 
@@ -200,17 +233,33 @@ public class ExperimentManager : MonoBehaviour
 
 
     // Sets the environment surroundings
-    private void SetEnvironment(EnvironmentManager.EnvironmentType environmentType)
+    private void SetEnvironment(string environmentName)
     {
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Here, we might want to use VERA's conditions management to sync experimental conditions across the entire experiment.
-        // This way, all CSV data logged will be associated with the participant's current assigned condition,
-        // and there is no ambiguity across different scripts about which condition the participant is in.
-        // Use the auto-generated VERAIV class for your experiment to set and get conditions in a centralized way.
-        //     EXAMPLE: VERAIV_Environment.SetValue([your environment condition value here]);
+        // VERA SANDBOX NOTE 3: CONDITION MANAGEMENT
+        // VERA provides a condition management system that allows you to define independent variables (IVs) 
+        // for your experiment and assign values to those IVs for each participant.
+        // For each IV you define on the VERA web interface, VERA will auto-generate a single static class.
+        // This class is named VERAIV_[YourIVName] and contains static methods for setting and getting the value of that IV:
+        //     * VERAIV_[YourIVName].SetValue([your IV value here]) - sets the value of the IV for the current participant.
+        //     * VERAIV_[YourIVName].GetValue() - gets the current value of the IV for the participant.
+        // The possible values you can set for each IV are also named according to what you set in the web interface.
+        // For example, if you have an IV called "Environment" with a possible value of "Desert",
+        // you can set the environment by using: VERAIV_Environment.SetValue(VERAIV_Environment.IVValue.V_Desert).
+
+        // WITH VERA, we can manage our environment conditions using VERA's condition management system:
+        //if (environmentName.Equals("desert"))
+        //    VERAIV_Environment.SetSelectedValue(VERAIV_Environment.IVValue.V_Desert);
+        //else if (environmentName.Equals("snow"))
+        //    VERAIV_Environment.SetSelectedValue(VERAIV_Environment.IVValue.V_Snow);
+
+        // WITHOUT VERA, we don't use a condition management system; no code is necessary.
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        EnvironmentManager.Instance.SetEnvironment(environmentType);
+
+        EnvironmentManager.Instance.SetEnvironment(environmentName); // Sets the visuals of the environment
     }
 
 
@@ -218,13 +267,23 @@ public class ExperimentManager : MonoBehaviour
     private void SetUseBadAim(bool useBadAim)
     {
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Similar to the environment, we can also manage firing mode conditions using VERA's conditions management system.
-        // Use the auto-generated VERAIV class for your experiment to set and get conditions in a centralized way.
-        //     EXAMPLE: VERAIV_FiringMode.SetValue([your firing mode condition value here]);
+        // VERA SANDBOX NOTE 4: CONDITION MANAGEMENT (CONTINUED)
+        // Similar to the environment, we can use VERA's condition management system for the aim type.
+
+        // WITH VERA, we can manage our aim type conditions using VERA's condition management system:
+        //if (useBadAim)
+        //    VERAIV_AimType.SetSelectedValue(VERAIV_AimType.IVValue.V_BadAim);
+        //else
+        //    VERAIV_AimType.SetSelectedValue(VERAIV_AimType.IVValue.V_GoodAim);
+
+        // WITHOUT VERA, we don't use a condition management system; no code is necessary.
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        BlasterController[] blasters = FindObjectsByType<BlasterController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var blaster in blasters)
+
+        // Set the aim mode on the blaster controllers based on the assigned condition
+        foreach (var blaster in blasterControllers)
         {
             blaster.UseBadAimMode = useBadAim;
         }
@@ -241,15 +300,25 @@ public class ExperimentManager : MonoBehaviour
     private void ShowSurvey(Action onSurveyComplete)
     {
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // To show surveys, you can use VERA's built-in survey system.
-        // Once you've defined a survey in the VERA dashboard for your experiment,
-        // use the VERASurveyHelper.StartSurvey function to display the survey to the participant.
-        // The survey will automatically display in front of the participant and log all responses.
-        //    EXAMPLE: VERASurveyHelper.StartSurvey(VERASurveyHelper.VERASurveyReference.[your survey name here], onSurveyComplete);
+        // VERA SANDBOX NOTE 5: SURVEYS
+        // VERA provides a built-in survey system for displaying surveys and collecting results.
+        // For each survey you define on the VERA web interface, VERA will add an entry to the VERASurveyHelper static class.
+        // You can use this class to start surveys:
+        //     * VERASurveyHelper.StartSurvey(VERASurveyHelper.VERASurveyReference.[your survey name here])
+        // This will automatically display the survey and log all responses to the VERA portal.
+        // You can also provide a variety of optional parameters to customize the experience; most notably:
+        //     * onSurveyComplete: A callback which will be triggered once the participant completes the survey.
+
+        // WITH VERA, we can display a survey using VERA's built-in survey system, and call onSurveyComplete on completion:
+        //VERASurveyHelper.StartSurvey(VERASurveyHelper.VERASurveyReference.S_ConfidenceRatingQuestionnaire, onSurveyComplete: onSurveyComplete);
+
+        // WITHOUT VERA, we'd have to make our own survey system; we'll skip the survey step and call onSurveyComplete:
+        onSurveyComplete?.Invoke();
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        Debug.Log("Survey should be shown here - skipping for now."); // For now, simply log that we would show a survey here.
-        onSurveyComplete?.Invoke(); // Invoke the callback immediately for now since we don't have an actual survey implemented.
+
     }
 
 
@@ -267,21 +336,30 @@ public class ExperimentManager : MonoBehaviour
         if (!inShootingRound)
             return;
 
-        //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // For data logging, you can use VERA's built-in data logging system to log any relevant data points you want to track.
-        // This will automatically associate the logged data with the participant's ID and current conditions, and save it in a CSV file for later analysis.
-        // For every file type you have defined on the VERA web interface, VERA will auto-generate a single static class for logging data.
-        // For example, if you have defined a file type called "LaserShots", VERA will generate a class called VERAFile_LaserShots with static methods for logging data to that file.
-        //     EXAMPLE: If we have a file type called "LaserShots" with columns for block, round, handedness, origin, direction, and hitTarget, we could log an entry like this:
-        //              VERAFile_LaserShots.CreateCsvEntry(0, currentEnvironmentBlock + 1, currentRound + 1, handedness.ToString(), origin, direction, hitTarget);
-        //----------------------------------------------------//
-        Debug.Log($"Laser shot logged: Block={currentEnvironmentBlock + 1}, Round={currentRound + 1}, Handedness={handedness}, Origin={origin}, Direction={direction}, HitTarget={hitTarget}");
-
         // Keep track of how many shots have been fired and hit in the current round
         shotsFiredInRound++;
         if (hitTarget)
             shotsHitInRound++;
+
+        //----------------------------------------------------//
+        // VERA SANDBOX NOTE 6: DATA LOGGING
+        // VERA provides a data logging system that allows you to easily log entries to files for later analysis.
+        // For each CSV file you define on the VERA web interface, VERA will auto-generate a static class.
+        // This file will be named VERAFile_[YourFileName] and contains static methods for creating entries in that file:
+        //     * VERAFile_[YourFileName].CreateCsvEntry([your parameters here]) - creates a new entry in the CSV file with the specified parameters.
+        // The parameters you can include in each entry are strictly typed according to the values you set on the web interface.
+        // For example, if you defined an integer column, the function would accept an integer parameter.
+
+        // WITH VERA, we can log laser shot data using VERA's data logging system:
+        //VERAFile_LaserLogs.CreateCsvEntry(currentEnvironmentBlock, currentRound, hitTarget);
+
+        // WITHOUT VERA, we'd have to make our own data logging system; for now, simply log to the console.
+        Debug.Log($"Laser shot logged: block={currentEnvironmentBlock}, round={currentRound}, hitTarget={hitTarget}");
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
+        //----------------------------------------------------//
+
     }
 
 
@@ -290,12 +368,18 @@ public class ExperimentManager : MonoBehaviour
     {
         float accuracy = shotsFiredInRound > 0 ? (float)shotsHitInRound / shotsFiredInRound : 0f;
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Similar to logging individual laser shots, here we can log summary data about each round using VERA's data logging system.
-        //     EXAMPLE: If we have a file type called "RoundData" with columns for block, round, totalShots, pumpkinsHit, and accuracy, we could log an entry like this:
-        //              VERAFile_RoundData.CreateCsvEntry(0, currentEnvironmentBlock + 1, currentRound + 1, shotsFiredInRound, shotsHitInRound, accuracy);
+        // VERA SANDBOX NOTE 7: DATA LOGGING (CONTINUED)
+        // Similar to logging laser shots, we can log summary data about the round using VERA's data logging.
+
+        // WITH VERA, we can log round summary data using VERA's data logging system:
+        //VERAFile_RoundSummaries.CreateCsvEntry(currentEnvironmentBlock, currentRound, shotsFiredInRound, shotsHitInRound, accuracy);
+
+        // WITHOUT VERA, we'd have to make our own data logging system; for now, simply log to the console.
+        Debug.Log($"Round data logged: block={currentEnvironmentBlock}, round={currentRound}, totalShots={shotsFiredInRound}, totalHits={shotsHitInRound}, accuracy={accuracy}");
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        Debug.Log($"Round data logged: Block={currentEnvironmentBlock + 1}, Round={currentRound + 1}, TotalShots={shotsFiredInRound}, PumpkinsHit={shotsHitInRound}, Accuracy={accuracy:P2}");
     }
 
 
@@ -309,13 +393,21 @@ public class ExperimentManager : MonoBehaviour
     private void ConcludeExperiment()
     {
         //----------------------------------------------------//
-        // VERA SANDBOX NOTE:
-        // Here, you can use VERA's session management system to finalize the experiment.
-        // This will automatically perform any necessary cleanup, mark the participant as complete,
-        // and kick them out of the experiment safely. All data will be saved and associated with the participant's ID.
-        //     EXAMPLE: VERASessionManager.FinalizeSession();
+        // VERA SANDBOX NOTE 8: SESSION FINALIZATION
+        // VERA provides session management tools to help you manage the lifecycle of your experiment sessions.
+        // Once the experiment is complete, you should call VERASessionManager.FinalizeSession() to properly end the session.
+        // This will ensure the participant is marked as "COMPLETE", and all data is saved and uploaded to the VERA portal.
+
+        // WITH VERA, we finalize the session using VERA's session management tools:
+        //VERASessionManager.FinalizeSession();
+
+        // WITHOUT VERA, we don't have session management; for now, simply log that the experiment is complete.
+        Debug.Log("Experiment complete!");
+
+        // Comment / uncomment the above lines depending on whether you are using VERA or not.
+        // Before using any VERA features, make sure to import the VERA namespace at the top of this script: "using VERA;"
         //----------------------------------------------------//
-        Debug.Log("Experiment complete!"); // For now, simply log that the experiment is complete.
+
     }
 
 
